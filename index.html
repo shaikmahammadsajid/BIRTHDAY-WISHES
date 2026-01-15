@@ -1,13 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BIRTHDAY WISHES</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Countdown</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.card {
+  width: 400px;
+  padding: 32px;
+  border-radius: 22px;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+  text-align: center;
+  animation: fadeScale 0.8s ease;
+}
+
+.icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.title {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 1rem;
+  opacity: 0.85;
+  margin-bottom: 18px;
+}
+
+.message {
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.highlight {
+  background: linear-gradient(90deg, #ff9a9e, #fad0c4);
+  -webkit-background-clip: text;
+  color: transparent;
+  font-weight: 600;
+}
+
+/* =====================
+   COUNTDOWN
+===================== */
+.countdown {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 22px;
+}
+
+.time-box {
+  flex: 1;
+  margin: 0 5px;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.18);
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
+}
+
+.time-box h2 {
+  font-size: 1.4rem;
+}
+
+.time-box span {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+/* =====================
+   ANIMATION
+===================== */
+@keyframes fadeScale {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+</style>
 </head>
+
 <body>
-    <div></div>
-    <script src="script.js"></script>
+
+<div class="card" id="app"></div>
+
+<script>
+/* =====================
+   CONFIG — CHANGE ONLY THIS
+===================== */
+const BIRTHDAY_DAY = 2;     // 1–31
+const BIRTHDAY_MONTH = 8;   // 0=Jan (7 = August)
+
+/* =====================
+   DATE SETUP
+===================== */
+const now = new Date();
+let birthday = new Date(
+  now.getFullYear(),
+  BIRTHDAY_MONTH,
+  BIRTHDAY_DAY
+);
+
+// If birthday already passed this year → next year
+if (now > birthday) {
+  birthday.setFullYear(now.getFullYear() + 1);
+}
+
+const isBirthday =
+  now.getDate() === BIRTHDAY_DAY &&
+  now.getMonth() === BIRTHDAY_MONTH;
+
+const app = document.getElementById("app");
+
+/* =====================
+   RENDER
+===================== */
+if (isBirthday) {
+  app.innerHTML = `
+    <div class="icon">🎉🎂</div>
+    <h1 class="title">Happy Birthday!</h1>
+    <p class="subtitle">Today is your special day ✨</p>
+    <p class="message">
+      Wishing you <span class="highlight">success & happiness</span><br>
+      Have an amazing year ahead 🎊
+    </p>
+  `;
+} else {
+  app.innerHTML = `
+    <div class="icon">⏳</div>
+    <h1 class="title">Not Today</h1>
+    <p class="subtitle">
+      Countdown to
+      <span class="highlight">
+        ${birthday.toLocaleString('default', { month: 'long' })} ${BIRTHDAY_DAY}
+      </span>
+    </p>
+
+    <div class="countdown">
+      <div class="time-box"><h2 id="days">0</h2><span>Days</span></div>
+      <div class="time-box"><h2 id="hours">0</h2><span>Hours</span></div>
+      <div class="time-box"><h2 id="minutes">0</h2><span>Minutes</span></div>
+      <div class="time-box"><h2 id="seconds">0</h2><span>Seconds</span></div>
+    </div>
+  `;
+
+  startCountdown();
+}
+
+/* =====================
+   COUNTDOWN FUNCTION
+===================== */
+function startCountdown() {
+  setInterval(() => {
+    const now = new Date().getTime();
+    const diff = birthday - now;
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    document.getElementById("days").innerText = days;
+    document.getElementById("hours").innerText = hours;
+    document.getElementById("minutes").innerText = minutes;
+    document.getElementById("seconds").innerText = seconds;
+  }, 1000);
+}
+</script>
+
 </body>
 </html>
